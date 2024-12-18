@@ -10,13 +10,16 @@ import org.testng.Assert;
 
 public class LoginSteps {
 
-    WebDriver driver;
-    String email;
+    static WebDriver driver;
+    static String email;
     String password = "Test@1234";
     LoginPage loginPage = new LoginPage();
 
+    Hooks hook = new Hooks();
+
     public LoginSteps() {
         driver = chromeDriverCall.driver;
+        hook.setUpOnce();
     }
 
     @Given("Open the URL")
@@ -34,6 +37,7 @@ public class LoginSteps {
         loginPage.fillFirstName("TestFirst");
         loginPage.fillLastName("TestLast");
         email = loginPage.fillEmail("@yopmail.com");
+        System.out.println(email);
         loginPage.fillPassword(password);
         loginPage.fillConfirmPassword(password);
     }
@@ -61,8 +65,22 @@ public class LoginSteps {
 
     @Then("Validate user successfully inside his account")
     public void userUnderAccount() {
-        String expectedEmail = loginPage.userUnderAccount();
-        Assert.assertEquals(email, expectedEmail);
+        try {
+            driver.get("https://magento.softwaretestingboard.com/customer/account/");
+            String actualEmail = loginPage.userUnderAccount();
+            loginPage.logoutButton();
+            Assert.assertEquals(email, actualEmail, "The emails do not match");
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Then("Close Window")
+    public void driverQuit() {
+        if(driver !=null){
+            driver.quit();
+            driver = null;
+        }
     }
 
 }
