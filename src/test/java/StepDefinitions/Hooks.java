@@ -2,7 +2,6 @@ package StepDefinitions;
 
 import Managers.chromeDriverCall;
 import io.cucumber.java.After;
-import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -15,17 +14,19 @@ import java.util.concurrent.TimeUnit;
 
 public class Hooks {
 
-    WebDriver driver = chromeDriverCall.driver;
+    static WebDriver driver = chromeDriverCall.driver;
+
     String savePath = "screenshots/";
 
-    @Before("@Scenario1 or @Scenario2")
-    public void setUp() {
-        driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+    public void setUpOnce() {
+        if (driver != null) {
+            driver.manage().window().maximize();
+            driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+        }
     }
 
-    @After("@Scenario1 or @Scenario2")
-    public void tearDown(Scenario scenario) {
+    @After
+    public void tearDownOnce(Scenario scenario) {
         if(scenario.isFailed()) {
             try {
                 byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
@@ -39,6 +40,5 @@ public class Hooks {
                 System.out.println("Failed to save the screenshot: " + e.getMessage());
             }
         }
-        driver.close();
     }
 }
