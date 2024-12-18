@@ -7,8 +7,6 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class LoginPage {
 
@@ -100,11 +98,7 @@ public class LoginPage {
         try {
             headerWelcomeName.isDisplayed();
             String accountDetails = accountInfo.getText();
-            System.out.println(accountDetails);
-            String emailRegex = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}";
-            Pattern pattern = Pattern.compile(emailRegex);
-            Matcher matcher = pattern.matcher(accountDetails);
-            actualEmail = matcher.group();
+            actualEmail = accountDetails.split("\\s+")[2];
         } catch (Exception ignored){
             ignored.printStackTrace();
         }
